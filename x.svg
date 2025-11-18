@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="32.853516mm"
+   height="19.078606mm"
+   viewBox="0 0 32.853516 19.078606"
+   version="1.1"
+   id="svg5"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2" />
+  <g
+     id="layer1"
+     transform="translate(-20.304592,19.078609)">
+    <path
+       id="rect234-3-6"
+       style="fill:#ff0000;fill-rule:evenodd;stroke-linecap:square;stroke-linejoin:bevel"
+       d="m 20.304592,-3.5e-6 v -19.0786055 h 32.853516 v 19.0786055 z" />
+    <text
+       xml:space="preserve"
+       style="font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans, Normal';text-decoration:none;text-decoration-line:none;text-decoration-color:#000000;fill:#000000;stroke-width:0.264583;stroke-linejoin:round;stroke-opacity:0.25098;-inkscape-stroke:none;stop-color:#000000"
+       x="21.25872"
+       y="-6.4249368"
+       id="text353"><tspan
+         id="tspan351"
+         style="stroke-width:0.264583"
+         x="21.25872"
+         y="-6.4249368">alpha</tspan></text>
+  </g>
+</svg>
