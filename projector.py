@@ -25,6 +25,10 @@ import argparse
 
 class AxonometricProjector():
     def __init__(self,alpha,gamma):
+        '''
+        alpha | float | alpha angle in radians
+        gamma | float | gamma angle in radians
+        '''
         self.alpha = alpha
         self.gamma = gamma
         # All anchors are at top left of each side plane of the cuboid (so the y face requires a translation).
@@ -42,6 +46,8 @@ class AxonometricProjector():
         return
     def transform_xyz(self,xyz_vec):
         return np.dot(self.transform,xyz_vec)
+    def compute_foreshortening(self):
+        return np.linalg.norm(self.transform,axis=0)
 
 class FaceCollection():
     def __init__(self,f_xface,f_yface,f_zface):

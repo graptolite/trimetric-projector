@@ -21,7 +21,7 @@
 from flask import Flask,render_template,request
 import numpy as np
 import json
-from projector import project_svg_collection,write_svg
+from projector import project_svg_collection,write_svg,AxonometricProjector
 import os
 
 app = Flask(__name__)
@@ -41,17 +41,24 @@ def project():
         msg = "A file input is absent, or one or more of the files provided does not exist: <i>%s</i>" % " ".join([f for i,f in enumerate(fs) if file_absences[i]])
     else:
         angles_test = [args[x].strip() for x in ["alpha","gamma"]]
+        if angles_test[0] == "45" and angles_test[1] == "":
+            angles_test[1] = np.degrees(np.arctan(np.sqrt(2)))
         try:
             angles = [np.radians(float(a)) for a in angles_test]
+            foreshortening = AxonometricProjector(*angles).compute_foreshortening()
+            dec_points = 3
+            uniques = set(foreshortening.round(dec_points))
+            proj_type = ["isometric","dimetric","trimetric"][len(uniques)-1]
+            msg += "%s projection with foreshortenings of [x,y,z]: %s</br>" % (proj_type,str(foreshortening.round(dec_points)))
             svg = project_svg_collection(*angles,*fs)
             try:
                 write_svg(args["outfile"],svg)
-                msg = "Saved to " + args["outfile"]
+                msg += "Saved to " + args["outfile"]
                 success = 1
             except FileNotFoundError:
-                msg = "Parent folder structure missing for outfile <i>%s</i>" % args["outfile"]
+                msg += "Parent folder structure missing for outfile <i>%s</i>" % args["outfile"]
         except ValueError as e:
-            msg = "For angles: <i>%s</i>. %s" % (str(angles_test),str(e))
+            msg += "For angles: <i>%s</i>. %s" % (str(angles_test),str(e))
     return json.dumps({"success":success,"svg":svg,"msg":msg})
 
 if __name__=="__main__":
