@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 '''
     Trimetric Projector | Project a collection of faces (in SVG format)
  forming a cuboid net into trimetric/dimetric/isometric view
