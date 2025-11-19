@@ -3,3 +3,5 @@ net.svg
 */*
 !derivation/derivation.org
 !derivation/derivation.pdf
+!templates/main.html
+!static/projection.svg

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="">
+  <style>
+    input {
+	margin-top: 10px;
+    }
+    svg {
+	overflow:visible;
+	transform:scale(400%) translate(100%,100%);
+	width:100%;
+    }
+  </style>
+  <head>
+    <meta charset="utf-8">
+    <title>Trimetric Projector GUI</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      $(document).keyup(function (ev) {
+	  // Bind <Enter> keyup to projection
+	  if (ev.which==13) {
+	      project();
+	      console.log("13");
+	  }
+      });
+
+      function display_svg (svg) {
+          document.getElementById("projected-display").innerHTML = svg;
+      }
+
+      function append_msg(msg) {
+          document.getElementById("msgs").innerHTML = "<b><i>[" + Date().split(" ").slice(1,5).join(" ")  + "]</i></b> " + msg + "<br />" + document.getElementById("msgs").innerHTML;
+      }
+
+      function project() {
+	  $.ajax({
+              url: "/project",
+              type: "POST",
+              contentType: "application/json;charset=UTF-8",
+              dataType: "json",
+              data: JSON.stringify({"x_svg":xface.value,"y_svg":yface.value,"z_svg":zface.value,
+				    "outfile":outfile.value,"alpha":alpha.value,"gamma":gamma.value
+				   }),
+              success: function (response) {
+                  append_msg(response["msg"]);
+                  if (response["success"] == 1) {
+                      display_svg(response["svg"]);
+                      append_msg("Successful projection");
+                  } else {
+                      append_msg("Failure");
+                  }
+              }
+	  });
+      }
+      </script>
+  </head>
+  <body>
+    <main>
+      <div style="position:absolute;display:flex;flex-direction:row;gap:10px;">
+	<div width="30%">
+	  <img src="static/projection.svg">
+	</div>
+	<div style="width:150px;display:flex;flex-direction:column;">
+          <input type="text" id="xface" name="xface" value="x.svg">
+	  <label for="xface">x face path</label>
+          <input type="text" id="yface" name="yface" value="y.svg">
+	  <label for="yface">y face path</label>
+          <input type="text" id="zface" name="zface" value="z.svg">
+	  <label for="zface">z face path</label>
+	  <hr>
+	  <input type="text" id="outfile" name="outfile" value="out.svg">
+	  <label for="outfile">Outfile</label>
+	  <input type="text" id="alpha" name="alpha" value="45">
+	  <label for="alpha">alpha (&deg;)</label>
+	  <input type="text" id="gamma" name="gamma" value="54.735610317245346">
+	  <label for="gamma">gamma (&deg;)</label>
+	  <input type="button" value="Project" onclick="project()">
+	  <hr>
+	  <div>
+	  <b>Messages</b></br>
+	  <i>Press [Enter] key to execute projection</i></br>
+	  <div id="msgs" style="font-size:10px;height:200px;resize:none;overflow-y:scroll">
+	  </div>
+	  </div>
+	</div>
+	<div width="20%">
+	OUTPUT:</br>
+      <div id="projected-display" >
+        Output will go here.
+      </div>
+      </div>
+      </div>
+    </main>
+  </body>
+</html>
