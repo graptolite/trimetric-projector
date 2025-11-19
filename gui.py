@@ -38,16 +38,20 @@ def project():
     success = 0
     file_absences = [(not os.path.exists(f)) for f in fs]
     if any(file_absences):
-        msg = "One of the files provided does not exist: " + " ".join([f for i,f in enumerate(fs) if file_absences[i]])
+        msg = "A file input is absent, or one or more of the files provided does not exist: <i>%s</i>" % " ".join([f for i,f in enumerate(fs) if file_absences[i]])
     else:
-        angles = [np.radians(float(args[x].strip())) for x in ["alpha","gamma"]]
+        angles_test = [args[x].strip() for x in ["alpha","gamma"]]
         try:
+            angles = [np.radians(float(a)) for a in angles_test]
             svg = project_svg_collection(*angles,*fs)
-            write_svg(args["outfile"],svg)
-            msg = "Saved to " + args["outfile"]
-            success = 1
+            try:
+                write_svg(args["outfile"],svg)
+                msg = "Saved to " + args["outfile"]
+                success = 1
+            except FileNotFoundError:
+                msg = "Parent folder structure missing for outfile <i>%s</i>" % args["outfile"]
         except ValueError as e:
-            msg = str(e)
+            msg = "For angles: <i>%s</i>. %s" % (str(angles_test),str(e))
     return json.dumps({"success":success,"svg":svg,"msg":msg})
 
 if __name__=="__main__":
