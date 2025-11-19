@@ -1,2 +1,5 @@
 out.svg
 net.svg
+*/*
+!derivation/derivation.org
+!derivation/derivation.pdf

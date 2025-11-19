@@ -1,0 +1,392 @@
+#+OPTIONS: toc:nil
+#+LATEX_HEADER: \usepackage[margin=1in]{geometry}
+#+LATEX_HEADER: \def\vec#1{\underline{#1}}
+#+LATEX_HEADER: \def\mat#1{\vec{\vec{#1}}}
+#+TITLE: Maths for the code
+#+AUTHOR:
+#+DATE:
+* Outline of Problem
+A cuboid with faces normal to orthogonal x,y,z axes is to be rotated (counterclockwise) about the z axis first, and then (clockwise) about the x axis to bring it into trimetric view (Figure [[fig:setup]]; or dimetric or isometric depending on the exact rotation angles), such that the coordinates are expressed within the 2D plane of display (plane of projection). Planes will be referred to either by the axis they are normal to (such that their value on that axis is a constant), or by the rotation angle that acts about the axis they are normal to. For example, the $x$ plane is equivalent to the $\gamma$ plane here. \textbf{Note: the maths here is unreviewed and may be incorrect}.
+
+#+NAME: fig:setup
+#+ATTR_LATEX: :width 0.7\textwidth
+#+CAPTION: Setup of the transformation.
+[[./3D-setup.png]]
+* Rotation Matrices
+** 2D
+Let a $x-y$ plane be defined in 2D. The $x$ and $y$ axes of this plane can be rotated by angle $\theta$ counterclockwise, with center of rotation at $(0,0)$.
+
+A vector of length $a$ that lies along the $x$ axis will be rotated from an initial point $\vec{v}_0 = [a,0]$ to $\vec{v}_0' = [a\cos{\theta},a\sin{\theta}]$ (Figure [[fig:2d-rot]]), and a vector of length $a$ that lies along the $y$ axis will be rotated from an initial point $\vec{v}_1 = [a,0]$ to $\vec{v}_1' = [-a\sin{\theta},a\cos{\theta}]$.
+
+#+NAME: fig:2d-rot
+#+ATTR_LATEX: :width \textwidth
+#+CAPTION: Setup and parameter illustations for a 2D rotation.
+[[./2D-rot.png]]
+
+This rotation can be captured in a matrix $\mat{R}$, which is $2\times 2$ since it transforms a 2D vector to a 2D vector. It forms part of the expression $\vec{v}' = \mat{R} \vec{v}$, which has the matrix form:
+
+\begin{equation*}
+\begin{bmatrix}
+v_x' \\
+v_y'
+\end{bmatrix} =
+\begin{bmatrix}
+r_a & r_c \\
+r_b & r_d
+\end{bmatrix}
+\begin{bmatrix}
+v_x \\
+v_y
+\end{bmatrix}
+\end{equation*}
+
+For the $y$ aligned vector:
+
+\begin{align*}
+\begin{bmatrix}
+a\cos{\theta} \\
+a\sin{\theta}
+\end{bmatrix} &=
+\begin{bmatrix}
+r_a & r_c \\
+r_b & r_d
+\end{bmatrix}
+\begin{bmatrix}
+a \\
+0
+\end{bmatrix}\\
+\begin{bmatrix}
+a\cos{\theta} \\
+a\sin{\theta}
+\end{bmatrix} &=
+\begin{bmatrix}
+r_a \\
+r_b
+\end{bmatrix}
+\cdot
+a \\
+&=
+\begin{bmatrix}
+a \cdot r_a \\
+a \cdot r_b
+\end{bmatrix}\\
+&\therefore\\
+r_a &= \cos\theta\\
+r_b &= \sin\theta
+\end{align*}
+
+And for the $z$ aligned vector:
+
+\begin{align*}
+\begin{bmatrix}
+-a\sin{\theta} \\
+a\cos{\theta}
+\end{bmatrix} &=
+\begin{bmatrix}
+r_a & r_c \\
+r_b & r_d
+\end{bmatrix}
+\begin{bmatrix}
+0 \\
+a
+\end{bmatrix}\\
+\begin{bmatrix}
+-a\sin{\theta} \\
+a\cos{\theta}
+\end{bmatrix} &=
+\begin{bmatrix}
+r_c \\
+r_d
+\end{bmatrix}
+\cdot
+a \\
+&=
+\begin{bmatrix}
+a \cdot r_c \\
+a \cdot r_d
+\end{bmatrix}\\
+&\therefore\\
+r_c &= -\sin\theta\\
+r_d &= \cos\theta
+\end{align*}
+
+Therefore:
+\begin{equation*}
+\mat{R} =
+\begin{bmatrix}
+\cos\theta & -\sin\theta \\
+\sin\theta & \cos\theta
+\end{bmatrix}
+\end{equation*}
+** 3D
+Continuing this logic with $a = 1$, the rotation matrices for \alpha and \gamma can be found.
+*** \alpha
+Let positive \alpha be a counterclockwise rotation about the $z$ axis as defined in Figure [[fig:rot-alpha]].
+
+#+NAME: fig:rot-alpha
+#+ATTR_LATEX: :width \textwidth
+#+CAPTION: Rotation of angle \alpha about the $z$ axis. The $z$ coordinate is ignored. For a face that's coplanar to $x-y$, $z_0 = z_1 = 0$.
+[[./2D-rot-alpha.pdf]]
+
+The vector transformations are used to identify the components of the $2\times 2$ \alpha rotation matrix:
+
+\begin{align*}
+\begin{bmatrix}
+\cos\alpha\\
+-\sin\alpha
+\end{bmatrix} &=
+\begin{bmatrix}
+r_a & r_c \\
+r_b & r_d
+\end{bmatrix}
+\begin{bmatrix}
+1\\
+0
+\end{bmatrix}\\
+\begin{bmatrix}
+\cos\alpha\\
+-\sin\alpha
+\end{bmatrix} &=
+\begin{bmatrix}
+r_a \\
+r_b
+\end{bmatrix}\\
+\begin{bmatrix}
+\sin\alpha\\
+\cos\alpha
+\end{bmatrix} &=
+\begin{bmatrix}
+r_a & r_c \\
+r_b & r_d
+\end{bmatrix}
+\begin{bmatrix}
+0\\
+1
+\end{bmatrix}\\
+\begin{bmatrix}
+\sin\alpha\\
+\cos\alpha
+\end{bmatrix} &=
+\begin{bmatrix}
+r_c \\
+r_d
+\end{bmatrix}
+\end{align*}
+
+The $2\times 2$ and 3x3 (full, which doesn't modify $z$ coordinates) transformation matrices can be constructed as follows:
+\begin{align*}
+\mat{R}_{\alpha-2\times 2} &=
+\begin{bmatrix}
+r_a & r_c \\
+r_b & r_d
+\end{bmatrix} =
+\begin{bmatrix}
+\cos\alpha & \sin\alpha\\
+-\sin\alpha & \cos\alpha
+\end{bmatrix}\\
+\mat{R}_{\alpha} &=
+\begin{bmatrix}
+r_a & r_c & 0\\
+r_b & r_d & 0\\
+0 & 0 & 1
+\end{bmatrix} =
+\begin{bmatrix}
+\cos\alpha & \sin\alpha & 0\\
+-\sin\alpha & \cos\alpha & 0\\
+0 & 0 & 1
+\end{bmatrix}
+\end{align*}
+*** \gamma
+Let positive \gamma be a clockwise rotation about the $z$ axis as defined in Figure [[fig:rot-gamma]].
+
+#+NAME: fig:rot-gamma
+#+ATTR_LATEX: :width \textwidth
+#+CAPTION: Rotation of angle \gamma about the $z$ axis. The $z$ coordinate is ignored. For a face that's coplanar to $y-z$, $x_0 = x_1 = 0$.
+[[./2D-rot-gamma.pdf]]
+
+The vector transformations are used to identify the components of the $2\times 2$ \gamma rotation matrix:
+
+\begin{align*}
+\begin{bmatrix}
+\cos\gamma\\
+\sin\gamma
+\end{bmatrix} &=
+\begin{bmatrix}
+r_a & r_c \\
+r_b & r_d
+\end{bmatrix}
+\begin{bmatrix}
+1\\
+0
+\end{bmatrix}\\
+\begin{bmatrix}
+\cos\gamma\\
+\sin\gamma
+\end{bmatrix} &=
+\begin{bmatrix}
+r_a \\
+r_b
+\end{bmatrix}\\
+\begin{bmatrix}
+-\sin\gamma\\
+\cos\gamma
+\end{bmatrix} &=
+\begin{bmatrix}
+r_a & r_c \\
+r_b & r_d
+\end{bmatrix}
+\begin{bmatrix}
+0\\
+1
+\end{bmatrix}\\
+\begin{bmatrix}
+-\sin\gamma\\
+\cos\gamma
+\end{bmatrix} &=
+\begin{bmatrix}
+r_c \\
+r_d
+\end{bmatrix}
+\end{align*}
+
+The $2\times 2$ and 3x3 (full, which doesn't modify $x$ coordinates) transformation matrices can be constructed as follows:
+\begin{align*}
+\mat{R}_{\gamma-2\times 2} &=
+\begin{bmatrix}
+r_a & r_c \\
+r_b & r_d
+\end{bmatrix} =
+\begin{bmatrix}
+\cos\gamma & \sin\gamma\\
+-\sin\gamma & \cos\gamma
+\end{bmatrix}\\
+\mat{R}_{\gamma} &=
+\begin{bmatrix}
+1 & 0 & 0\\
+0 & r_a & r_c\\
+0 & r_b & r_d\\
+\end{bmatrix} =
+\begin{bmatrix}
+1 & 0 & 0\\
+0 & \cos\gamma & \sin\gamma\\
+0 & -\sin\gamma & \cos\gamma\\
+\end{bmatrix}
+\end{align*}
+*** Combined Rotation
+Let the $3\times 3$ projection matrix, $\mat{P}_{3 \times 3}$ be the combined effect of these ordered rotations, provided by dot product of $\mat{R}_{\gamma}$ and $\mat{R}_{\alpha}$ (i.e. the \alpha rotation is applied first, then the \gamma rotation):
+
+\begin{align*}
+\mat{P}_{3\times 3} &= \mat{R}_{\gamma} \mat{R}_{\alpha}\\
+&= \begin{bmatrix}
+1 & 0 & 0\\
+0 & \cos\gamma & \sin\gamma\\
+0 & -\sin\gamma & \cos\gamma\\
+\end{bmatrix}
+\begin{bmatrix}
+\cos\alpha & \sin\alpha & 0\\
+-\sin\alpha & \cos\alpha & 0\\
+0 & 0 & 1
+\end{bmatrix}\\
+&= \begin{bmatrix}
+\cos\alpha+0+0 & \sin\alpha+0+0 & 0+0+0\\
+0-\sin\alpha\cos\gamma+0 & 0+\cos\alpha\cos\gamma+0 & 0+0+\sin\gamma\\
+0+\sin\alpha\sin\gamma+0 & 0-\cos\alpha\sin\gamma+0 & 0+0+\cos\gamma\\
+\end{bmatrix}\\
+&= \begin{bmatrix}
+\cos\alpha & \sin\alpha & 0\\
+-\sin\alpha\cos\gamma & \cos\alpha\cos\gamma & \sin\gamma\\
+\sin\alpha\sin\gamma & -\cos\alpha\sin\gamma & \cos\gamma\\
+\end{bmatrix}
+\end{align*}
+
+With projection onto a 2D display plane, there's no need for coordinates in the axis going in and out of the page (the third row of $\mat{P}_{3\times 3}$), so $\mat{P}$ can be expressed as a $2\times 3$ matrix:
+\begin{equation*}
+\mat{P} = \begin{bmatrix}
+\cos\alpha & \sin\alpha & 0\\
+-\sin\alpha\cos\gamma & \cos\alpha\cos\gamma & \sin\gamma
+\end{bmatrix}
+\end{equation*}
+* Transformation Matrices
+** For ${\gamma,\beta,\alpha}$ planes
+The transformation matrix for each of the axis-normal planes is a $2\times 2$ subset of $\mat{P}$, which can be demonstrated for the $\gamma$ plane. Since this plane has $x=0$, the effect of $\mat{P}$ can be simplified into a $2\times 2$ transformation matrix $\mat{T}_{\gamma-2\times 2}$ (such that $\vec{v}_{proj-yz} = \mat{T}_{\gamma-2\times 2} \vec{v}_{yz}$, where $\vec{v}_{proj-yz}$ is the projected vector and $\vec{v}_{yz}$ is the original vector lying on the $y-z$ plane) as follows:
+\begin{align*}
+\begin{bmatrix}
+x'\\
+y'\\
+z'
+\end{bmatrix} &=
+\begin{bmatrix}
+\cos\alpha & \sin\alpha & 0\\
+-\sin\alpha\cos\gamma & \cos\alpha\cos\gamma & \sin\gamma
+\end{bmatrix}
+\begin{bmatrix}
+0\\
+y\\
+z
+\end{bmatrix}\\
+&= \begin{bmatrix}
+0 \cdot \cos\alpha & y\cdot \sin\alpha & z \cdot 0\\
+0 \cdot -\sin\alpha\cos\gamma & y\cdot \cos\alpha\cos\gamma & z\cdot \sin\gamma
+\end{bmatrix}\\
+\begin{bmatrix}
+y'\\
+z'
+\end{bmatrix} &= \begin{bmatrix}
+y\cdot \sin\alpha & z \cdot 0\\
+y\cdot \cos\alpha\cos\gamma & z\cdot \sin\gamma
+\end{bmatrix}\\
+&= \begin{bmatrix}
+\sin\alpha & 0\\
+\cos\alpha\cos\gamma & \sin\gamma
+\end{bmatrix}
+\begin{bmatrix}
+y\\
+z
+\end{bmatrix}\\
+&\therefore\\
+\mat{T}_{\gamma-2\times 2} &= \begin{bmatrix}
+\sin\alpha & 0\\
+\cos\alpha\cos\gamma & \sin\gamma
+\end{bmatrix}
+\end{align*}
+
+This process can be repeated for the \beta and \alpha faces:
+\begin{align*}
+\mat{T}_{\beta-2\times 2} &= \begin{bmatrix}
+\cos\alpha & 0\\
+-\sin\alpha\cos\gamma & \sin\gamma
+\end{bmatrix}\\
+\mat{T}_{\alpha-2\times 2} &= \begin{bmatrix}
+\cos\alpha & \sin\alpha\\
+-\sin\alpha\cos\gamma & \cos\alpha\cos\gamma
+\end{bmatrix}
+\end{align*}
+** SVG Transformations
+SVG transformation matrices, $\mat{T}_{svg}$ are expressed as $2 \times 3$ matrices forming part of a $3 \times 3$ matrix:
+\begin{equation*}
+\mat{T}_{svg} =
+\begin{bmatrix}
+a & c & e\\
+b & d & f\\
+0 & 0 & 1
+\end{bmatrix}
+\end{equation*}
+
+With $\mat{T}_{2\times 2}$ being the top right of $\mat{T}_{svg}$:
+\begin{equation*}
+\mat{T}_{2\times 2} \to \begin{bmatrix}
+a & c\\
+b & d\\
+\end{bmatrix}
+\end{equation*}
+
+$e$ and $f$ are transformations to apply after transformation by $\mat{T}_{2\times 2}$ (i.e., in coordinates of the plane of projection). For the $\alpha$ and $\gamma$ planes, $e=f=0$.
+** Translation of the $y$ face
+It is clear in Figure [[fig:setup]] that to get a sensible $y$ face (labelled \beta) location given the net, its top left corner is not at (0,0,0) in the final projected image. Instead, its top left corner is transformed from (0,0,0) to the projected location of the top right corner of the $x$ face (labelled $\alpha$). This can be resolved by setting $(e,f)$ in the svg transformation matrix to $\mat{T}_{\gamma-2\times 2} [w_{\alpha} 0]$ where $w_{\alpha}$ is the width of the $x$ ($\alpha$) face.
+* Final Transformation Matrices' Parameters
+\begin{align*}
+& \begin{bmatrix}a & b & c & d & e & f\end{bmatrix}\\
+\gamma :& \begin{bmatrix}\sin\alpha & \cos\alpha\cos\gamma & 0 & \sin\gamma & 0 & 0\end{bmatrix}\\
+\beta :& \begin{bmatrix}\cos\alpha & -\sin\alpha\cos\gamma & 0 & \sin\gamma & w_{\alpha}\sin\alpha & w_{\alpha}\cos\alpha\cos\gamma\end{bmatrix}\\
+\alpha :& \begin{bmatrix}\cos\alpha & -\sin\alpha\cos\gamma & \sin\alpha & \cos\alpha\cos\gamma & 0 & 0\end{bmatrix}
+\end{align*}
