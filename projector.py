@@ -23,16 +23,16 @@ from numpy import cos,sin,tan
 import re
 import argparse
 
-class OrthographicProjector():
+class AxonometricProjector():
     def __init__(self,alpha,gamma):
         self.alpha = alpha
         self.gamma = gamma
         # All anchors are at top left of each side plane of the cuboid (so the y face requires a translation).
         # Define the overall combined-rotation transformation (see `derivation/derivation.pdf` for details).
-        transform = np.array([[cos(alpha),sin(alpha),0],
-                              [-sin(alpha)*cos(gamma),cos(alpha)*cos(gamma),sin(gamma)]])
+        self.transform = np.array([[cos(alpha),sin(alpha),0],
+                                   [-sin(alpha)*cos(gamma),cos(alpha)*cos(gamma),sin(gamma)]])
         # Define the transformations for each of the cuboid faces.
-        subtransform = lambda i_a,i_b : np.array([transform[:,i_a],transform[:,i_b]]).T
+        subtransform = lambda i_a,i_b : np.array([self.transform[:,i_a],self.transform[:,i_b]]).T
         self.transform_x = subtransform(1,2)
         self.transform_y = subtransform(0,2)
         self.transform_z = subtransform(0,1)
@@ -40,6 +40,8 @@ class OrthographicProjector():
                        "y":self.transform_y,
                        "z":self.transform_z}
         return
+    def transform_xyz(self,xyz_vec):
+        return np.dot(self.transform,xyz_vec)
 
 class FaceCollection():
     def __init__(self,f_xface,f_yface,f_zface):
@@ -80,7 +82,7 @@ def project_svg_collection(alpha,gamma,f_xface,f_yface,f_zface):
     check_bad_angle = lambda ang : (ang < 0) or (ang > 90)
     if any([check_bad_angle(ang) for ang in [alpha,gamma]]):
         raise ValueError("Angles alpha and gamma must both be in the range [0,90] degrees.")
-    proj = OrthographicProjector(alpha,gamma)
+    proj = AxonometricProjector(alpha,gamma)
     faces = FaceCollection(f_xface,f_yface,f_zface)
     svg_dims = faces.get_dimensions()
     toplevel_content = faces.get_toplevel_contents()
